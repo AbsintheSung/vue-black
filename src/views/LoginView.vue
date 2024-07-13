@@ -1,17 +1,31 @@
 <script setup>
 import axios from 'axios'
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const baseURL = import.meta.env.VITE_APP_API_URL
 const userInputInit = {
   username: '',
   password: ''
 }
 const userInput = ref({ ...userInputInit })
 const handleLogin = async () => {
-  console.log(userInput.value)
-  console.log('清空')
-  userInput.value = { ...userInputInit }
-  console.log(userInput.value)
+  try {
+    const response = await axios.post(`${baseURL}/v2/admin/signin`, userInput.value)
+    if (response.status === 200) {
+      const { token, expired } = response.data
+      document.cookie = `tokenCode=${token};expired=${new Date(expired)}`
+      router.push('/')
+      // console.log(document.cookie.replace(/(?:(?:^|.*;\s*)tokenCode\s*=\s*([^;]*).*$)|^.*$/, '$1'))
+      // console.log('跳轉')
+    }
+  } catch (error) {
+    if (error.response.status === 400) {
+      console.log('錯誤測試', error.response)
+    }
+  } finally {
+    userInput.value = { ...userInputInit }
+  }
 }
 </script>
 <template>
