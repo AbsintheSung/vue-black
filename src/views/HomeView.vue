@@ -5,7 +5,7 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Navbar</a>
-        <button class="btn btn-outline-success" type="submit">登出</button>
+        <button class="btn btn-outline-success">登出</button>
       </div>
     </nav>
     <div class="container-fluid flex-grow-1">
