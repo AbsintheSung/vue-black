@@ -2,12 +2,11 @@
 import axios from '../utils/http'
 import { onMounted } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
-const fetData = async () => {
-  const response = await axios.post(`${baseURL}/v2/api/user/check`)
-  console.log('response', response)
+const checkAdmin = async () => {
+  await axios.post(`${baseURL}/v2/api/user/check`)
 }
 onMounted(() => {
-  fetData()
+  checkAdmin()
 })
 </script>
 
