@@ -1,6 +1,7 @@
 <script setup>
 import axios from '../utils/http'
-import { onMounted, ref } from 'vue'
+import AsideBar from '../layouts/AsideBar.vue'
+import { onMounted } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const checkAdmin = async () => {
   await axios.post(`${baseURL}/v2/api/user/check`)
@@ -20,19 +21,8 @@ onMounted(() => {
     </nav>
     <div class="container-fluid flex-grow-1">
       <div class="row h-100">
-        <aside class="col-2 border-end pt-5 px-0">
-          <ul class="list-group rounded-0">
-            <li class="list-group-item active" aria-current="true">
-              <router-link to="/productlist">產品管理</router-link>
-            </li>
-            <li class="list-group-item">
-              <router-link to="/orderlist">訂單管理</router-link>
-            </li>
-            <li class="list-group-item">
-              <router-link to="/couponlist">優惠卷管理</router-link>
-            </li>
-          </ul>
-        </aside>
+        <AsideBar />
+
         <main class="col pt-5">
           <router-view></router-view>
         </main>
