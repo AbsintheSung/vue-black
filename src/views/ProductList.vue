@@ -1,4 +1,23 @@
-<script setup></script>
+<script setup>
+import axios from '../utils/http'
+import { computed, onMounted, ref } from 'vue'
+const baseURL = import.meta.env.VITE_APP_API_URL
+const apiName = import.meta.env.VITE_APP_API_NAME
+const productList = ref([])
+const renderProductList = computed(() => productList.value)
+const getProductList = async () => {
+  try {
+    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
+    productList.value = [...response.data.products]
+    console.log(productList.value)
+  } catch (error) {
+    console.log(error)
+  }
+}
+onMounted(() => {
+  getProductList()
+})
+</script>
 <template>
   <div class="text-end">
     <button class="btn btn-primary" type="button">新增產品</button>
@@ -16,14 +35,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>A分類</td>
-        <td>A名稱A名稱A名稱A名稱</td>
-        <td>A價格</td>
-        <td>B價格</td>
+      <tr v-for="productItem in renderProductList" :key="productItem.id">
+        <td>{{ productItem.category }}</td>
+        <td>{{ productItem.title }}</td>
+        <td>{{ productItem.origin_price }}</td>
+        <td>{{ productItem.price }}</td>
         <td>
-          <span class="text-success">啟用</span>
-          <span class="text-danger">未啟用</span>
+          <span class="text-success" v-if="productItem.is_enabled">啟用</span>
+          <span class="text-danger" v-else>未啟用</span>
         </td>
         <td>
           <div class="d-flex align-items-center">
