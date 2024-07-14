@@ -1,5 +1,6 @@
 <script setup>
 import axios from '../utils/http'
+import AsideBar from '../layouts/AsideBar.vue'
 import { onMounted } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const checkAdmin = async () => {
@@ -20,8 +21,11 @@ onMounted(() => {
     </nav>
     <div class="container-fluid flex-grow-1">
       <div class="row h-100">
-        <aside class="col-1 border-end pt-5">我是測攔</aside>
-        <main class="col pt-5">我是內容</main>
+        <AsideBar />
+
+        <main class="col pt-5">
+          <router-view></router-view>
+        </main>
       </div>
     </div>
   </div>
