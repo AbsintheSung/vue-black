@@ -34,7 +34,7 @@ const activeMenus = computed(() => {
 })
 </script>
 <template>
-  <aside class="col-2 border-end pt-5 px-0">
+  <aside class="aside border-end pt-5 px-0">
     <ul class="list-group rounded-0">
       <li
         class="list-group-item"
@@ -48,4 +48,9 @@ const activeMenus = computed(() => {
     </ul>
   </aside>
 </template>
-<style scoped></style>
+<style scoped>
+/* 此處不想要再另外 引入bootstrap 的變數 去做新增，所以直接將樣式寫在此處  */
+.aside {
+  width: 250px;
+}
+</style>
