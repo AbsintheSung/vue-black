@@ -43,7 +43,7 @@ const activeMenus = computed(() => {
         :class="{ active: listItem.active }"
         :aria-current="listItem.active ? 'true' : undefined"
       >
-        <router-link :to="listItem.path">{{ listItem.name }}</router-link>
+        <router-link class="link-light text-decoration-none" :to="listItem.path">{{ listItem.name }} </router-link>
       </li>
     </ul>
   </aside>
