@@ -1,6 +1,7 @@
 <script setup>
 import axios from 'axios'
 import { ref } from 'vue'
+import ToastView from '@/components/ToastView.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const baseURL = import.meta.env.VITE_APP_API_URL
@@ -8,20 +9,26 @@ const userInputInit = {
   username: '',
   password: ''
 }
+const loginShowToast = ref(null)
+const loginToastMes = ref('')
 const userInput = ref({ ...userInputInit })
 const handleLogin = async () => {
   try {
     const response = await axios.post(`${baseURL}/v2/admin/signin`, userInput.value)
     if (response.status === 200) {
-      const { token, expired } = response.data
+      const { token, expired, message } = response.data
       document.cookie = `tokenCode=${token};expired=${new Date(expired)}`
+      loginToastMes.value = '🟢' + message
+      loginShowToast.value.handleOpen()
       router.push('/')
       // console.log(document.cookie.replace(/(?:(?:^|.*;\s*)tokenCode\s*=\s*([^;]*).*$)|^.*$/, '$1'))
       // console.log('跳轉')
     }
   } catch (error) {
     if (error.response.status === 400) {
-      console.log('錯誤測試', error.response)
+      const { message } = error.response.data
+      loginToastMes.value = '🔴' + message
+      loginShowToast.value.handleOpen()
     }
   } finally {
     userInput.value = { ...userInputInit }
@@ -29,6 +36,7 @@ const handleLogin = async () => {
 }
 </script>
 <template>
+  <ToastView ref="loginShowToast" :sendmessage="loginToastMes" />
   <div class="container vh-100 d-flex justify-content-center align-items-center">
     <form class="w-50 mx-auto d-flex flex-column" @submit.prevent>
       <div class="row mb-3">
