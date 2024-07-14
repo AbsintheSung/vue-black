@@ -1,11 +1,16 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import ToastView from '../components/ToastView.vue'
+const toast = ref(null)
+</script>
 
 <template>
+  <ToastView ref="toast" />
   <div class="vh-100 d-flex flex-column">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Navbar</a>
-        <button class="btn btn-outline-success">登出</button>
+        <button class="btn btn-outline-success" @click="toast.handleOpen">登出</button>
       </div>
     </nav>
     <div class="container-fluid flex-grow-1">
