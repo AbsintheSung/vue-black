@@ -18,9 +18,9 @@
     <tbody>
       <tr>
         <td>A分類</td>
-        <td>A名稱</td>
-        <td class="text-right">A價格</td>
-        <td class="text-right">B價格</td>
+        <td>A名稱A名稱A名稱A名稱</td>
+        <td>A價格</td>
+        <td>B價格</td>
         <td>
           <span class="text-success">啟用</span>
           <span class="text-danger">未啟用</span>
