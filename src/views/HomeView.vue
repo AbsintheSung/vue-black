@@ -20,7 +20,13 @@ onMounted(() => {
     </nav>
     <div class="container-fluid flex-grow-1">
       <div class="row h-100">
-        <aside class="col-1 border-end pt-5">我是測攔</aside>
+        <aside class="col-2 border-end pt-5 px-0">
+          <ul class="list-group rounded-0">
+            <li class="list-group-item active" aria-current="true">產品管理</li>
+            <li class="list-group-item">訂單管理</li>
+            <li class="list-group-item">優惠卷管理</li>
+          </ul>
+        </aside>
         <main class="col pt-5">我是內容</main>
       </div>
     </div>
