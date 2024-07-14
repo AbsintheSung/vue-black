@@ -1,8 +1,10 @@
 <script setup>
 import axios from '../utils/http'
 import { computed, onMounted, ref } from 'vue'
+import ProductModal from '@/components/ProductModal.vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
+const productModalControl = ref('')
 const productList = ref([])
 const renderProductList = computed(() => productList.value)
 const getProductList = async () => {
@@ -14,11 +16,19 @@ const getProductList = async () => {
     console.log(error)
   }
 }
+const handleEdit = (productItem) => {
+  productModalControl.value.handleOpen()
+  console.log(productItem)
+}
+const handleDel = (productItem) => {
+  console.log(productItem)
+}
 onMounted(() => {
   getProductList()
 })
 </script>
 <template>
+  <ProductModal ref="productModalControl" />
   <div class="text-end">
     <button class="btn btn-primary" type="button">新增產品</button>
   </div>
@@ -46,8 +56,8 @@ onMounted(() => {
         </td>
         <td>
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-primary">編輯</button>
-            <button class="btn btn-outline-danger ms-2">刪除</button>
+            <button class="btn btn-outline-primary" @click="handleEdit(productItem)">編輯</button>
+            <button class="btn btn-outline-danger ms-2" @click="handleDel(productItem)">刪除</button>
           </div>
         </td>
       </tr>
