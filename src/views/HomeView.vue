@@ -1,4 +1,15 @@
-<script setup></script>
+<script setup>
+import axios from '../utils/http'
+import { onMounted } from 'vue'
+const baseURL = import.meta.env.VITE_APP_API_URL
+const fetData = async () => {
+  const response = await axios.post(`${baseURL}/v2/api/user/check`)
+  console.log('response', response)
+}
+onMounted(() => {
+  fetData()
+})
+</script>
 
 <template>
   <div class="vh-100 d-flex flex-column">
