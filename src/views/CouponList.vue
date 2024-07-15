@@ -58,7 +58,7 @@ onMounted(() => {
         <td>{{ couponItem.percent }}%</td>
         <td>{{ couponItem.due_date }}</td>
         <td>
-          <span class="text-success" v-if="true">啟用</span>
+          <span class="text-success" v-if="couponItem.is_enabled">啟用</span>
           <span class="text-danger" v-else>未啟用</span>
         </td>
         <td>
