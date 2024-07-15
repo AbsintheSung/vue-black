@@ -2,12 +2,15 @@
 import axios from '../utils/http'
 import { computed, onMounted, ref } from 'vue'
 import ProductModal from '@/components/ProductModal.vue'
+import DelProductModalVue from '@/components/DelProductModal.vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const productModalControl = ref('')
+const delProductModalControl = ref('')
 const productList = ref([])
 const renderProductList = computed(() => productList.value)
 const tempProduct = ref({}) //用來傳遞單一商品內容給 modal用的
+const delTempProduct = ref({}) //用來傳遞刪除的單一商品 給 modal用
 const getProductList = async () => {
   try {
     const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
@@ -27,7 +30,9 @@ const handleCreate = (productItem) => {
   productModalControl.value.handleOpen()
 }
 const handleDel = (productItem) => {
-  console.log(productItem)
+  delTempProduct.value = productItem
+  delProductModalControl.value.handleOpen()
+  // console.log(productItem)
 }
 //接收 productModal 傳遞來的事件，來執行編輯資料( 發送API )
 const getEditData = async (getdata) => {
@@ -59,11 +64,22 @@ const getCreateData = async (getdata) => {
     // console.log(response.status)
   }
 }
+//接收 delProductModal 傳遞來的事件，來執行刪除資料( 發送API )
+const getDalData = async (dataId) => {
+  const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/product/${dataId}`)
+  console.log(response)
+  if (response.status === 200) {
+    await getProductList()
+    delProductModalControl.value.handleClose()
+    // console.log(response.status)
+  }
+}
 onMounted(() => {
   getProductList()
 })
 </script>
 <template>
+  <DelProductModalVue ref="delProductModalControl" :delData="delTempProduct" @delProduct="getDalData" />
   <ProductModal ref="productModalControl" :sendproductItem="tempProduct" @createData="getCreateData" @editData="getEditData" />
   <div class="text-end">
     <button class="btn btn-primary" type="button" @click="handleCreate({})">新增產品</button>
