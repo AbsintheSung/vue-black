@@ -19,11 +19,11 @@ onMounted(() => {
         <button class="btn btn-outline-success">登出</button>
       </div>
     </nav>
-    <div class="container-fluid flex-grow-1">
-      <div class="row h-100">
+    <div class="container-fluid flex-grow-1 ps-0">
+      <div class="h-100 d-flex">
         <AsideBar />
 
-        <main class="col pt-5">
+        <main class="w-100 pt-5">
           <router-view></router-view>
         </main>
       </div>
