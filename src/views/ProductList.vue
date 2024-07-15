@@ -7,6 +7,7 @@ const apiName = import.meta.env.VITE_APP_API_NAME
 const productModalControl = ref('')
 const productList = ref([])
 const renderProductList = computed(() => productList.value)
+const tempProduct = ref({}) //用來傳遞單一商品內容給 modal用的
 const getProductList = async () => {
   try {
     const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
@@ -18,7 +19,8 @@ const getProductList = async () => {
 }
 const handleEdit = (productItem) => {
   productModalControl.value.handleOpen()
-  console.log(productItem)
+  tempProduct.value = productItem
+  // console.log(productItem)
 }
 const handleDel = (productItem) => {
   console.log(productItem)
@@ -28,7 +30,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <ProductModal ref="productModalControl" />
+  <ProductModal ref="productModalControl" :sendproductItem="tempProduct" />
   <div class="text-end">
     <button class="btn btn-primary" type="button">新增產品</button>
   </div>
