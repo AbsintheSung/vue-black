@@ -29,12 +29,20 @@ const handleCreate = (productItem) => {
 const handleDel = (productItem) => {
   console.log(productItem)
 }
+//接收 productModal 傳遞來的事件，來執行新建資料( 發送API )
+const getEditData = (data) => {
+  console.log('我是編輯', data)
+}
+//接收 productModal 傳遞來的事件，來執行編輯資料( 發送API )
+const getCreateData = (data) => {
+  console.log('我是建立', data)
+}
 onMounted(() => {
   getProductList()
 })
 </script>
 <template>
-  <ProductModal ref="productModalControl" :sendproductItem="tempProduct" />
+  <ProductModal ref="productModalControl" :sendproductItem="tempProduct" @createData="getCreateData" @editData="getEditData" />
   <div class="text-end">
     <button class="btn btn-primary" type="button" @click="handleCreate({})">新增產品</button>
   </div>
