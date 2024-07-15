@@ -30,8 +30,21 @@ const handleDel = (productItem) => {
   console.log(productItem)
 }
 //接收 productModal 傳遞來的事件，來執行新建資料( 發送API )
-const getEditData = (data) => {
-  console.log('我是編輯', data)
+const getEditData = async (getdata) => {
+  const productData = {
+    data: { ...getdata }
+  }
+  // console.log('我是編輯', data)
+  try {
+    const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/product/${getdata.id}`, productData)
+    if (response.status === 200) {
+      await getProductList()
+      productModalControl.value.handleClose()
+      // console.log(response.status)
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 //接收 productModal 傳遞來的事件，來執行編輯資料( 發送API )
 const getCreateData = (data) => {

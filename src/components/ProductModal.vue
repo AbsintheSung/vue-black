@@ -58,7 +58,8 @@ const handleSendData = (productData) => {
   isEdit.value ? emits('editData', productData) : emits('createData', productData)
 }
 defineExpose({
-  handleOpen
+  handleOpen,
+  handleClose
 })
 /*
   透過監聽方式，監聽傳遞進來的值
