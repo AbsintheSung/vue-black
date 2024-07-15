@@ -17,7 +17,7 @@ const initProductItem = {
   description: '',
   id: '',
   imageUrl: '',
-  imagesUrl: Array(5),
+  imagesUrl: Array(5), //必須指派該陣列確實位子有幾個，否則渲染會有問題
   is_enabled: '',
   origin_price: '',
   price: '',
@@ -30,6 +30,9 @@ const handleClose = () => {
   modal.myModalClose()
 }
 const handleOpen = async () => {
+  /* 暴露出 handleOpen給上層父祖件使用，但是資料渲染上是透過解構方式，會有一些小問題，使用nextTick，並判斷是否傳遞的資料為空
+    不為空表示有資料，帶dom加載完再帶入資料
+  */
   modal.myModalShow()
   await nextTick()
   if (Object.getOwnPropertyNames(props.sendproductItem).length != 0) {
@@ -39,6 +42,11 @@ const handleOpen = async () => {
 defineExpose({
   handleOpen
 })
+/*
+  透過監聽方式，監聽傳遞進來的值
+  若為空物件，表示我們要建立新的產品資料，所以解構原先組件建立的初始狀態值
+  若非空物件，表示我們要編輯傳遞過來的產品資料，所以解構傳遞過來的資料 
+*/
 watch(
   () => props.sendproductItem,
   (newProps) => {
