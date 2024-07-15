@@ -1,5 +1,13 @@
-<script setup></script>
+<script setup>
+import CouponModal from '@/components/CouponModal.vue'
+import { ref } from 'vue'
+const couponModalControl = ref('')
+const handleEdit = () => {
+  couponModalControl.value.handleOpen()
+}
+</script>
 <template>
+  <CouponModal ref="couponModalControl" />
   <div>我是優惠卷列表</div>
   <div class="text-end">
     <button class="btn btn-primary" type="button">新增優惠券</button>
@@ -26,7 +34,7 @@
         </td>
         <td>
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-primary">編輯</button>
+            <button class="btn btn-outline-primary" @click="handleEdit">編輯</button>
             <button class="btn btn-outline-danger ms-2">刪除</button>
           </div>
         </td>
