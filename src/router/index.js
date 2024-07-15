@@ -20,6 +20,11 @@ const router = createRouter({
       name: 'Login',
       component: () => import('../views/LoginView.vue')
     },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../components/CouponModal.vue')
+    },
   ]
 })
 
