@@ -40,7 +40,13 @@ const handleOpen = async () => {
   isEdit.value = false
   await nextTick()
   if (Object.getOwnPropertyNames(props.sendproductItem).length != 0) {
-    productItem.value = { ...props.sendproductItem, imagesUrl: [...props.sendproductItem.imagesUrl] }
+    const imagesUrl = [...props.sendproductItem.imagesUrl]
+    while (imagesUrl.length < 5) {
+      imagesUrl.push(undefined)
+    }
+    productItem.value = { ...props.sendproductItem, imagesUrl }
+    // productItem.value = { ...props.sendproductItem, imagesUrl: [...props.sendproductItem.imagesUrl] }
+
     //若為編輯資料，修改isEdit狀態
     isEdit.value = true
   }
