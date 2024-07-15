@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+import { DatePicker } from '../plugins/vcalendar.config'
+import { ref } from 'vue'
+const date = ref(new Date())
+</script>
 <template>
   <!-- <Teleport to="body">
     <div class="modal fade" tabindex="-1" ref="productModal"> -->
@@ -24,7 +28,12 @@
             <div class="row gx-2 mb-3">
               <div class="mb-3 col-md-8">
                 <label for="time" class="form-label">到期日</label>
-                <input type="text" class="form-control" id="time" placeholder="請輸入優惠券到期日期" />
+                <DatePicker v-model="date" is-dark="true">
+                  <template #default="{ inputValue, inputEvents }">
+                    <input type="text" class="form-control" id="time" :value="inputValue" v-on="inputEvents" />
+                    <!-- <BaseInput :value="inputValue" v-on="inputEvents" /> -->
+                  </template>
+                </DatePicker>
               </div>
               <div class="mb-3 col-md-4">
                 <label for="discount" class="form-label">折扣百分比</label>
@@ -51,4 +60,12 @@
   <!-- </div>
   </Teleport> -->
 </template>
-<style scoped></style>
+<style>
+.vc-title,
+.vc-nav-title,
+.vc-nav-item,
+.vc-nav-arrow,
+.vc-arrow {
+  background-color: #0f172a;
+}
+</style>
