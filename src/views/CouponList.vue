@@ -6,7 +6,7 @@ const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const couponModalControl = ref('')
 const couponList = ref([])
-const rendercouponList = computed(() => {
+const renderCouponList = computed(() => {
   return couponList.value.map((coupon) => ({
     ...coupon,
     due_date: formatTimestamp(coupon.due_date)
@@ -23,6 +23,7 @@ const getCouponList = async () => {
     console.log(error)
   }
 }
+//將  Unix 时间戳 轉換成 年/月/日格式
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp * 1000)
   const year = date.getFullYear()
@@ -52,7 +53,7 @@ onMounted(() => {
       </tr>
     </thead>
     <tbody>
-      <tr v-for="couponItem in rendercouponList" :key="couponItem.id">
+      <tr v-for="couponItem in renderCouponList" :key="couponItem.id">
         <td>{{ couponItem.title }}</td>
         <td>{{ couponItem.percent }}%</td>
         <td>{{ couponItem.due_date }}</td>
