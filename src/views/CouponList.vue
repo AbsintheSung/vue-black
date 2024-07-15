@@ -6,13 +6,15 @@ const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const couponModalControl = ref('')
 const couponList = ref([])
+const couPonData = ref({})
 const renderCouponList = computed(() => {
   return couponList.value.map((coupon) => ({
     ...coupon,
     due_date: formatTimestamp(coupon.due_date)
   }))
 })
-const handleEdit = () => {
+const handleEdit = (oneData) => {
+  couPonData.value = { ...oneData }
   couponModalControl.value.handleOpen()
 }
 const getCouponList = async () => {
@@ -36,7 +38,7 @@ onMounted(() => {
 })
 </script>
 <template>
-  <CouponModal ref="couponModalControl" />
+  <CouponModal ref="couponModalControl" :sendCouponData="couPonData" />
   <div>我是優惠卷列表</div>
   <div class="text-end">
     <button class="btn btn-primary" type="button">新增優惠券</button>
@@ -63,7 +65,7 @@ onMounted(() => {
         </td>
         <td>
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-primary" @click="handleEdit">編輯</button>
+            <button class="btn btn-outline-primary" @click="handleEdit(couponItem)">編輯</button>
             <button class="btn btn-outline-danger ms-2">刪除</button>
           </div>
         </td>
