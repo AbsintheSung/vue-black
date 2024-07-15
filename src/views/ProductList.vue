@@ -18,9 +18,13 @@ const getProductList = async () => {
   }
 }
 const handleEdit = (productItem) => {
-  productModalControl.value.handleOpen()
   tempProduct.value = productItem
+  productModalControl.value.handleOpen()
   // console.log(productItem)
+}
+const handleCreate = (productItem) => {
+  tempProduct.value = productItem
+  productModalControl.value.handleOpen()
 }
 const handleDel = (productItem) => {
   console.log(productItem)
@@ -32,7 +36,7 @@ onMounted(() => {
 <template>
   <ProductModal ref="productModalControl" :sendproductItem="tempProduct" />
   <div class="text-end">
-    <button class="btn btn-primary" type="button">新增產品</button>
+    <button class="btn btn-primary" type="button" @click="handleCreate({})">新增產品</button>
   </div>
 
   <table class="table">

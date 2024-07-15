@@ -11,20 +11,20 @@ const props = defineProps({
     }
   }
 })
-// const initProductItem = {
-//   category: '',
-//   content: '',
-//   description: '',
-//   id: '',
-//   imageUrl: '',
-//   imagesUrl: [],
-//   is_enabled: '',
-//   origin_price: '',
-//   price: '',
-//   num: '',
-//   title: '',
-//   unit: ''
-// }
+const initProductItem = {
+  category: '',
+  content: '',
+  description: '',
+  id: '',
+  imageUrl: '',
+  imagesUrl: Array(5),
+  is_enabled: '',
+  origin_price: '',
+  price: '',
+  num: '',
+  title: '',
+  unit: ''
+}
 const productItem = ref({})
 const handleClose = () => {
   modal.myModalClose()
@@ -39,7 +39,13 @@ defineExpose({
 watch(
   () => props.sendproductItem,
   (newProps) => {
-    productItem.value = { ...newProps }
+    console.log(Object.getOwnPropertyNames(newProps).length)
+    if (Object.getOwnPropertyNames(newProps).length === 0) {
+      productItem.value = { ...initProductItem, imagesUrl: [...initProductItem.imagesUrl] }
+    } else {
+      console.log(newProps)
+      productItem.value = { ...newProps, imagesUrl: [...newProps.imagesUrl] }
+    }
     console.log(productItem.value)
   }
 )
@@ -71,34 +77,22 @@ watch(
                     />
                     <img class="img-fluid" :src="productItem.imageUrl" alt="" />
                   </div>
-                  <div class="mb-2">
-                    <label for="image" class="form-label">輸入圖片網址(圖1)</label>
-                    <input type="text" class="form-control" id="image" name="file-to-upload" placeholder="請輸入圖片連結" />
-                    <img
-                      class="img-fluid"
-                      src="https://github.com/AbsintheSung/7TAO_webpage/blob/main/assets/images/event/03.jpg?raw=true"
-                      alt=""
+                  <div class="mb-2" v-for="(imgItem, index) in productItem.imagesUrl" :key="imgItem">
+                    <label for="image" class="form-label">輸入圖片網址(圖-{{ index + 1 }})</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="image"
+                      name="file-to-upload"
+                      placeholder="請輸入圖片連結"
+                      v-model="productItem.imagesUrl[index]"
                     />
-                  </div>
-                  <div class="mb-2">
-                    <label for="image" class="form-label">輸入圖片網址(圖2)</label>
-                    <input type="text" class="form-control" id="image" name="file-to-upload" placeholder="請輸入圖片連結" />
-                    <img class="img-fluid" src="" alt="" />
-                  </div>
-                  <div class="mb-2">
-                    <label for="image" class="form-label">輸入圖片網址(圖3)</label>
-                    <input type="text" class="form-control" id="image" name="file-to-upload" placeholder="請輸入圖片連結" />
-                    <img class="img-fluid" src="" alt="" />
-                  </div>
-                  <div class="mb-2">
-                    <label for="image" class="form-label">輸入圖片網址(圖4)</label>
-                    <input type="text" class="form-control" id="image" name="file-to-upload" placeholder="請輸入圖片連結" />
-                    <img class="img-fluid" src="" alt="" />
-                  </div>
-                  <div class="mb-2">
-                    <label for="image" class="form-label">輸入圖片網址(圖5)</label>
-                    <input type="text" class="form-control" id="image" name="file-to-upload" placeholder="請輸入圖片連結" />
-                    <img class="img-fluid" src="" alt="" />
+                    <img
+                      v-if="productItem.imagesUrl[index] !== undefined"
+                      class="img-fluid"
+                      :src="productItem.imagesUrl[index]"
+                      :alt="`圖片-${index + 1}`"
+                    />
                   </div>
                 </div>
               </div>
