@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref } from 'vue'
+import { computed, watch, ref, nextTick } from 'vue'
 import { useModal } from '../plugins/bootstrap.modal.js'
 const modal = useModal()
 const productModal = modal.modalOption
@@ -29,9 +29,12 @@ const productItem = ref({})
 const handleClose = () => {
   modal.myModalClose()
 }
-const handleOpen = () => {
+const handleOpen = async () => {
   modal.myModalShow()
-  productItem.value = { ...props.sendproductItem }
+  await nextTick()
+  if (Object.getOwnPropertyNames(props.sendproductItem).length != 0) {
+    productItem.value = { ...props.sendproductItem, imagesUrl: [...props.sendproductItem.imagesUrl] }
+  }
 }
 defineExpose({
   handleOpen
@@ -77,7 +80,7 @@ watch(
                     />
                     <img class="img-fluid" :src="productItem.imageUrl" alt="" />
                   </div>
-                  <div class="mb-2" v-for="(imgItem, index) in productItem.imagesUrl" :key="imgItem">
+                  <div class="mb-2" v-for="(imgItem, index) in productItem.imagesUrl" :key="index">
                     <label for="image" class="form-label">輸入圖片網址(圖-{{ index + 1 }})</label>
                     <input
                       type="text"
