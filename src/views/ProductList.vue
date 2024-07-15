@@ -15,7 +15,7 @@ const getProductList = async () => {
   try {
     const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
     productList.value = [...response.data.products]
-    console.log(productList.value)
+    // console.log(productList.value)
   } catch (error) {
     console.log(error)
   }
