@@ -1,10 +1,38 @@
 <script setup>
+import axios from '../utils/http'
 import CouponModal from '@/components/CouponModal.vue'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+const baseURL = import.meta.env.VITE_APP_API_URL
+const apiName = import.meta.env.VITE_APP_API_NAME
 const couponModalControl = ref('')
+const couponList = ref([])
+const rendercouponList = computed(() => {
+  return couponList.value.map((coupon) => ({
+    ...coupon,
+    due_date: formatTimestamp(coupon.due_date)
+  }))
+})
 const handleEdit = () => {
   couponModalControl.value.handleOpen()
 }
+const getCouponList = async () => {
+  try {
+    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/coupons`)
+    couponList.value = [...response.data.coupons]
+  } catch (error) {
+    console.log(error)
+  }
+}
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp * 1000)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}/${month}/${day}`
+}
+onMounted(() => {
+  getCouponList()
+})
 </script>
 <template>
   <CouponModal ref="couponModalControl" />
@@ -24,10 +52,10 @@ const handleEdit = () => {
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>優惠券1號</td>
-        <td>折扣百分比</td>
-        <td>到期日</td>
+      <tr v-for="couponItem in rendercouponList" :key="couponItem.id">
+        <td>{{ couponItem.title }}</td>
+        <td>{{ couponItem.percent }}%</td>
+        <td>{{ couponItem.due_date }}</td>
         <td>
           <span class="text-success" v-if="true">啟用</span>
           <span class="text-danger" v-else>未啟用</span>
