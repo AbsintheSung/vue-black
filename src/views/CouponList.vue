@@ -50,10 +50,10 @@ const getCouponList = async () => {
 const fetchDataReq = (isEdit) => {
   const sendData = { ...couPonData.value, due_date: dateChangeUnix(couPonData.value.due_date) }
   if (isEdit) {
-    console.log('發送編輯請求', sendData)
+    // console.log('發送編輯請求', sendData)
     sendEditReq(sendData)
   } else {
-    console.log('發送新增請求', sendData)
+    // console.log('發送新增請求', sendData)
     sendCreateReq(sendData)
   }
 }
