@@ -2,9 +2,11 @@
 import axios from '../utils/http'
 import CouponModal from '@/components/CouponModal.vue'
 import DelCouponModal from '@/components/DelCouponModal.vue'
+import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
+const { formatTimestamp, dateChangeUnix } = useDateFormat()
 const couponModalControl = ref('')
 const delCouponModalControl = ref('')
 const couponList = ref([])
@@ -44,19 +46,6 @@ const getCouponList = async () => {
   } catch (error) {
     console.log(error)
   }
-}
-//將  Unix 时间戳 轉換成 年/月/日格式
-const formatTimestamp = (timestamp) => {
-  const date = new Date(timestamp * 1000)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}/${month}/${day}`
-}
-//年/月/日格式 轉換成 Unix 时间戳
-const dateChangeUnix = (dateString) => {
-  const date = new Date(dateString)
-  return Math.floor(date.getTime() / 1000)
 }
 const fetchDataReq = (isEdit) => {
   const sendData = { ...couPonData.value, due_date: dateChangeUnix(couPonData.value.due_date) }
