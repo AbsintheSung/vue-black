@@ -9,11 +9,27 @@ const productModalControl = ref('')
 const delProductModalControl = ref('')
 const productList = ref([])
 const renderProductList = computed(() => productList.value)
-const tempProduct = ref({}) //用來傳遞單一商品內容給 modal用的
+const unitProduct = ref({}) //用來傳遞單一商品內容給 modal用的
 const delTempProduct = ref({}) //用來傳遞刪除的單一商品 給 modal用
+const isEdit = ref(true)
+const initUnitProduct = {
+  category: '',
+  content: '',
+  description: '',
+  id: '',
+  imageUrl: '',
+  imagesUrl: Array(5), //必須指派該陣列確實位子有幾個，否則渲染會有問題
+  is_enabled: 0,
+  origin_price: '',
+  price: '',
+  num: '',
+  title: '',
+  unit: ''
+}
 const getProductList = async () => {
   try {
     const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
+    // console.log(response.data)
     productList.value = [...response.data.products]
     // console.log(productList.value)
   } catch (error) {
@@ -21,12 +37,18 @@ const getProductList = async () => {
   }
 }
 const handleEdit = (productItem) => {
-  tempProduct.value = productItem
+  unitProduct.value = { ...productItem }
+  isEdit.value = true
+  while (unitProduct.value.imagesUrl.length < 5) {
+    unitProduct.value.imagesUrl.push(undefined)
+  }
   productModalControl.value.handleOpen()
   // console.log(productItem)
 }
-const handleCreate = (productItem) => {
-  tempProduct.value = productItem
+const handleCreate = () => {
+  const tempImgs = initUnitProduct.imagesUrl
+  isEdit.value = false
+  unitProduct.value = { ...initUnitProduct, imagesUrl: [...tempImgs] }
   productModalControl.value.handleOpen()
 }
 const handleDel = (productItem) => {
@@ -35,52 +57,51 @@ const handleDel = (productItem) => {
   // console.log(productItem)
 }
 //接收 productModal 傳遞來的事件，來執行編輯資料( 發送API )
-const getEditData = async (getdata) => {
+const fetchEditData = async () => {
   const productData = {
-    data: { ...getdata }
+    data: { ...unitProduct.value }
   }
-  // console.log('我是編輯', data)
   try {
-    const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/product/${getdata.id}`, productData)
+    const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/product/${unitProduct.value.id}`, productData)
     if (response.status === 200) {
       await getProductList()
       productModalControl.value.handleClose()
-      // console.log(response.status)
     }
   } catch (error) {
     console.log(error)
   }
 }
 //接收 productModal 傳遞來的事件，來執行新建資料( 發送API )
-const getCreateData = async (getdata) => {
+const fetchCreateData = async () => {
   const productData = {
-    data: { ...getdata }
+    data: { ...unitProduct.value }
   }
   const response = await axios.post(`${baseURL}/v2/api/${apiName}/admin/product`, productData)
   console.log(response)
   if (response.status === 200) {
     await getProductList()
     productModalControl.value.handleClose()
-    // console.log(response.status)
   }
 }
 //接收 delProductModal 傳遞來的事件，來執行刪除資料( 發送API )
-const getDalData = async (dataId) => {
+const fetchDalData = async (dataId) => {
   const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/product/${dataId}`)
-  console.log(response)
   if (response.status === 200) {
     await getProductList()
     delProductModalControl.value.handleClose()
     // console.log(response.status)
   }
 }
+const getIsEditStatus = async (isEdit) => {
+  isEdit ? await fetchEditData() : await fetchCreateData()
+}
 onMounted(() => {
   getProductList()
 })
 </script>
 <template>
-  <DelProductModalVue ref="delProductModalControl" :delData="delTempProduct" @delProduct="getDalData" />
-  <ProductModal ref="productModalControl" :sendproductItem="tempProduct" @createData="getCreateData" @editData="getEditData" />
+  <DelProductModalVue ref="delProductModalControl" :delData="delTempProduct" @delProduct="fetchDalData" />
+  <ProductModal ref="productModalControl" v-model:productItem="unitProduct" :isEdit="isEdit" @sendIsEdit="getIsEditStatus" />
   <div class="text-end">
     <button class="btn btn-primary" type="button" @click="handleCreate({})">新增產品</button>
   </div>
