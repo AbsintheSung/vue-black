@@ -1,11 +1,14 @@
 <script setup>
 import axios from '../utils/http'
+import OrderUserModal from '@/components/OrderUserModal.vue'
 import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
-const { formatTimestamp, dateChangeUnix } = useDateFormat()
+const { formatTimestamp } = useDateFormat()
 const orderData = ref([])
+const OrderUserModalControl = ref('')
+const orderUserInfo = ref({})
 const orderListData = computed(() => {
   return orderData.value.map((item) => {
     const formatDate = formatTimestamp(item.create_at)
@@ -15,17 +18,22 @@ const orderListData = computed(() => {
     }
   })
 })
+
 const getOrderList = async () => {
   const response = await axios(`${baseURL}/v2/api/${apiName}/admin/orders`)
   orderData.value = response.data.orders
   console.log(response.data.orders)
 }
-
+const handleUserInfo = (orderItem) => {
+  orderUserInfo.value = orderItem
+  OrderUserModalControl.value.handleOpen()
+}
 onMounted(() => {
   getOrderList()
 })
 </script>
 <template>
+  <OrderUserModal ref="OrderUserModalControl" :orderUserInfo="orderUserInfo" />
   <h2>訂單列表</h2>
 
   <table class="table align-middle">
@@ -42,7 +50,9 @@ onMounted(() => {
     </thead>
     <tbody>
       <tr v-for="orderItem in orderListData" :key="orderItem.id">
-        <td>{{ orderItem.id }}</td>
+        <td>
+          <button type="button" class="btn btn-link" @click="handleUserInfo(orderItem)">{{ orderItem.id }}</button>
+        </td>
         <td>{{ orderItem.create_at }}</td>
         <td>{{ orderItem.user.email }}</td>
         <td>我是購買款項內容</td>
