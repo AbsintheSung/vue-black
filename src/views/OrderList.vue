@@ -2,6 +2,7 @@
 import axios from '../utils/http'
 import OrderUserModal from '@/components/OrderUserModal.vue'
 import DelOrderModal from '@/components/DelOrderModal.vue'
+import PutOrderModal from '@/components/PutOrderModal.vue'
 import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
@@ -10,6 +11,8 @@ const { formatTimestamp } = useDateFormat()
 const orderData = ref([])
 const OrderUserModalControl = ref('')
 const delOrderModalControl = ref('')
+const putOrderModalControl = ref('')
+const putOrderItem = ref({})
 const delOrderId = ref('')
 const orderUserInfo = ref({})
 const orderListData = computed(() => {
@@ -38,7 +41,6 @@ const handleDelOrder = (orderId) => {
 }
 const sendDelOrderId = async (orderId) => {
   orderId === 'all' ? delAllOrder(orderId) : delOneOrder(orderId)
-
 }
 const delOneOrder = async (orderId) => {
   try {
@@ -62,6 +64,25 @@ const delAllOrder = async (orderId) => {
     console.log(error)
   }
 }
+const handlePaid = (order) => {
+  putOrderItem.value = order
+  putOrderModalControl.value.handleOpen()
+}
+const sendPutOrder = async (orderdata) => {
+  const isPaid = orderdata.is_paid
+  const sendData = {
+    data: { ...orderdata, is_paid: !isPaid }
+  }
+  try {
+    const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/order/${orderdata.id}`, sendData)
+    if (response.status === 200) {
+      await getOrderList()
+      putOrderModalControl.value.handleClose()
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 onMounted(() => {
   getOrderList()
 })
@@ -69,6 +90,7 @@ onMounted(() => {
 <template>
   <OrderUserModal ref="OrderUserModalControl" :orderUserInfo="orderUserInfo" />
   <DelOrderModal ref="delOrderModalControl" :delOrderId="delOrderId" @delOrder="sendDelOrderId" />
+  <PutOrderModal ref="putOrderModalControl" :putOrderData="putOrderItem" @putOrder="sendPutOrder" />
   <h2>訂單列表</h2>
   <div class="text-end">
     <button class="btn btn-danger" type="button" @click="handleDelOrder('all')">刪除全部訂單</button>
@@ -100,7 +122,7 @@ onMounted(() => {
         </td>
         <td>
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-success">付款</button>
+            <button class="btn btn-outline-success" @click="handlePaid(orderItem)">付款</button>
             <button class="btn btn-outline-danger ms-2" @click="handleDelOrder(orderItem.id)">刪除</button>
           </div>
         </td>
