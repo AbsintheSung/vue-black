@@ -56,15 +56,46 @@ const dateChangeUnix = (dateString) => {
   return Math.floor(date.getTime() / 1000)
 }
 const fetchDataReq = (isEdit) => {
-  // couPonData.value.due_date = dateChangeUnix(couPonData.value.due_date)
-  // console.log()
   const sendData = { ...couPonData.value, due_date: dateChangeUnix(couPonData.value.due_date) }
   if (isEdit) {
     console.log('發送編輯請求', sendData)
+    sendEditReq(sendData)
   } else {
     console.log('發送新增請求', sendData)
+    sendCreateReq(sendData)
   }
-  // console.log(isEdit)
+}
+const sendEditReq = async (couponData) => {
+  const temp = {
+    data: {
+      ...couponData
+    }
+  }
+  try {
+    const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/coupon/${couponData.id}`, temp)
+    if (response.status === 200) {
+      await getCouponList()
+      couponModalControl.value.handleClose()
+    }
+  } catch (error) {
+    console.log('編輯請求失敗', error)
+  }
+}
+const sendCreateReq = async (couponData) => {
+  const temp = {
+    data: {
+      ...couponData
+    }
+  }
+  try {
+    const response = await axios.post(`${baseURL}/v2/api/${apiName}/admin/coupon`, temp)
+    if (response.status === 200) {
+      await getCouponList()
+      couponModalControl.value.handleClose()
+    }
+  } catch (error) {
+    console.log('新建請求失敗', error)
+  }
 }
 onMounted(() => {
   getCouponList()
