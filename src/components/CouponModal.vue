@@ -1,25 +1,14 @@
 <script setup>
 import { DatePicker } from '../plugins/vcalendar.config'
 import { useModal } from '../plugins/bootstrap.modal.js'
+const couPonItem = defineModel('couPonItem', { type: Object })
+const mymodal = useModal()
+const couponModal = mymodal.modalOption
 const props = defineProps({
   isEdit: {
     type: Boolean,
     default: false
   }
-})
-const couPonItem = defineModel('couPonItem', { type: Object })
-
-const mymodal = useModal()
-const couponModal = mymodal.modalOption
-const handleClose = () => {
-  mymodal.myModalClose()
-}
-const handleOpen = async () => {
-  mymodal.myModalShow()
-}
-defineExpose({
-  handleOpen,
-  handleClose
 })
 const emits = defineEmits({
   sendReq: () => {
@@ -28,14 +17,17 @@ const emits = defineEmits({
 })
 const handleConfirm = () => {
   emits('sendReq', props.isEdit)
-  // if (props.isEdit) {
-  //   console.log('發送編輯請求')
-  //   emits('sendReq', props.isEdit)
-  // } else {
-  //   console.log('發送建立請求', props.isEdit)
-  //   emits('sendReq', props.isEdit)
-  // }
 }
+const handleClose = () => {
+  mymodal.myModalClose()
+}
+const handleOpen = () => {
+  mymodal.myModalShow()
+}
+defineExpose({
+  handleOpen,
+  handleClose
+})
 </script>
 <template>
   <Teleport to="body">
