@@ -1,11 +1,14 @@
 <script setup>
 import axios from '../utils/http'
 import CouponModal from '@/components/CouponModal.vue'
+import DelCouponModal from '@/components/DelCouponModal.vue'
 import { computed, onMounted, ref } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const couponModalControl = ref('')
+const delCouponModalControl = ref('')
 const couponList = ref([])
+const delOneCoupon = ref({})
 const isEdit = ref(false)
 const initCouPonItem = {
   code: '',
@@ -97,11 +100,27 @@ const sendCreateReq = async (couponData) => {
     console.log('新建請求失敗', error)
   }
 }
+const handleDel = (couponData) => {
+  delOneCoupon.value = couponData
+  delCouponModalControl.value.handleOpen()
+}
+const getDelData = async (dataId) => {
+  try {
+    const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/coupon/${dataId}`)
+    if (response.status === 200) {
+      await getCouponList()
+      delCouponModalControl.value.handleClose()
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 onMounted(() => {
   getCouponList()
 })
 </script>
 <template>
+  <DelCouponModal ref="delCouponModalControl" :delData="delOneCoupon" @delCoupon="getDelData" />
   <CouponModal ref="couponModalControl" v-model:couPonItem="couPonData" :isEdit="isEdit" @sendReq="fetchDataReq" />
   <div>我是優惠卷列表</div>
   <div class="text-end">
@@ -130,7 +149,7 @@ onMounted(() => {
         <td>
           <div class="d-flex align-items-center">
             <button class="btn btn-outline-primary" @click="handleEdit(couponItem)">編輯</button>
-            <button class="btn btn-outline-danger ms-2">刪除</button>
+            <button class="btn btn-outline-danger ms-2" @click="handleDel(couponItem)">刪除</button>
           </div>
         </td>
       </tr>
