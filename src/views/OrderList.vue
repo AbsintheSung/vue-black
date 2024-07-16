@@ -1,4 +1,30 @@
-<script setup></script>
+<script setup>
+import axios from '../utils/http'
+import { useDateFormat } from '../composables/dateFormat.js'
+import { computed, onMounted, ref } from 'vue'
+const baseURL = import.meta.env.VITE_APP_API_URL
+const apiName = import.meta.env.VITE_APP_API_NAME
+const { formatTimestamp, dateChangeUnix } = useDateFormat()
+const orderData = ref([])
+const orderListData = computed(() => {
+  return orderData.value.map((item) => {
+    const formatDate = formatTimestamp(item.create_at)
+    return {
+      ...item,
+      create_at: formatDate
+    }
+  })
+})
+const getOrderList = async () => {
+  const response = await axios(`${baseURL}/v2/api/${apiName}/admin/orders`)
+  orderData.value = response.data.orders
+  console.log(response.data.orders)
+}
+
+onMounted(() => {
+  getOrderList()
+})
+</script>
 <template>
   <h2>訂單列表</h2>
 
@@ -15,19 +41,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>我是編號內容</td>
-        <td>我是購買時間內容</td>
-        <td>我是電子信箱內容</td>
+      <tr v-for="orderItem in orderListData" :key="orderItem.id">
+        <td>{{ orderItem.id }}</td>
+        <td>{{ orderItem.create_at }}</td>
+        <td>{{ orderItem.user.email }}</td>
         <td>我是購買款項內容</td>
-        <td>我是應付金額內容</td>
+        <td>{{ orderItem.total }}</td>
         <td>
-          <span class="text-success" v-if="true">已付款</span>
-          <span class="text-danger" v-else>未啟用</span>
+          <span class="text-success" v-if="orderItem.is_paid">已付款</span>
+          <span class="text-danger" v-else>未付款</span>
         </td>
         <td>
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-primary">編輯</button>
+            <button class="btn btn-outline-success">付款</button>
             <button class="btn btn-outline-danger ms-2">刪除</button>
           </div>
         </td>
