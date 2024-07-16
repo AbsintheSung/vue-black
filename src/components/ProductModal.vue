@@ -1,90 +1,36 @@
 <script setup>
-import { watch, ref, nextTick } from 'vue'
 import { useModal } from '../plugins/bootstrap.modal.js'
 const modal = useModal()
 const productModal = modal.modalOption
 const props = defineProps({
-  sendproductItem: {
-    type: Object,
-    default: () => {
-      return {}
-    }
+  isEdit: {
+    type: Boolean,
+    default: false
   }
 })
-const initProductItem = {
-  category: '',
-  content: '',
-  description: '',
-  id: '',
-  imageUrl: '',
-  imagesUrl: Array(5), //必須指派該陣列確實位子有幾個，否則渲染會有問題
-  is_enabled: 0,
-  origin_price: '',
-  price: '',
-  num: '',
-  title: '',
-  unit: ''
-}
-const productItem = ref({})
+
+const productItem = defineModel('productItem', { type: Object })
+
 const handleClose = () => {
   modal.myModalClose()
 }
-const isEdit = ref(false)
+// const isEdit = ref(false)
 const handleOpen = async () => {
-  /* 暴露出 handleOpen給上層父祖件使用，但是資料渲染上是透過解構方式，會有一些小問題，使用nextTick，並判斷是否傳遞的資料為空
-    不為空表示有資料，帶dom加載完再帶入資料
-  */
-
   modal.myModalShow()
-  //顯示彈窗時候，重置isEdit數值
-  isEdit.value = false
-  await nextTick()
-  if (Object.getOwnPropertyNames(props.sendproductItem).length != 0) {
-    const imagesUrl = [...props.sendproductItem.imagesUrl]
-    while (imagesUrl.length < 5) {
-      imagesUrl.push(undefined)
-    }
-    productItem.value = { ...props.sendproductItem, imagesUrl }
-    // productItem.value = { ...props.sendproductItem, imagesUrl: [...props.sendproductItem.imagesUrl] }
-
-    //若為編輯資料，修改isEdit狀態
-    isEdit.value = true
-  }
 }
 const emits = defineEmits({
-  createData: () => {
-    return true
-  },
-  editData: () => {
-    return true
+  sendIsEdit: (isEdit) => {
+    return typeof isEdit === 'boolean' ? true : false
   }
 })
-const handleSendData = (productData) => {
-  //觸發事件後，傳遞給父祖件，根據狀態傳遞不同的資料上去
-  isEdit.value ? emits('editData', productData) : emits('createData', productData)
+const handleSendData = () => {
+  emits('sendIsEdit', props.isEdit)
 }
+
 defineExpose({
   handleOpen,
   handleClose
 })
-/*
-  透過監聽方式，監聽傳遞進來的值
-  若為空物件，表示我們要建立新的產品資料，所以解構原先組件建立的初始狀態值
-  若非空物件，表示我們要編輯傳遞過來的產品資料，所以解構傳遞過來的資料
-*/
-watch(
-  () => props.sendproductItem,
-  (newProps) => {
-    // console.log(Object.getOwnPropertyNames(newProps).length)
-    if (Object.getOwnPropertyNames(newProps).length === 0) {
-      productItem.value = { ...initProductItem, imagesUrl: [...initProductItem.imagesUrl] }
-    } else {
-      // console.log(newProps)
-      productItem.value = { ...newProps, imagesUrl: [...newProps.imagesUrl] }
-    }
-    // console.log(productItem.value)
-  }
-)
 </script>
 <template>
   <Teleport to="body">
@@ -201,7 +147,7 @@ watch(
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger me-3" data-bs-dismiss="modal" @click="handleClose">取消</button>
-            <button type="button" class="btn btn-primary" @click="handleSendData(productItem)">確認</button>
+            <button type="button" class="btn btn-primary" @click="handleSendData">確認</button>
           </div>
         </div>
       </div>
