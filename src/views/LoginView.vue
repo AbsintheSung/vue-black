@@ -3,6 +3,7 @@ import axios from 'axios'
 import { ref } from 'vue'
 import ToastView from '@/components/ToastView.vue'
 import { useRouter } from 'vue-router'
+import { useLoading } from 'vue-loading-overlay'
 const router = useRouter()
 const baseURL = import.meta.env.VITE_APP_API_URL
 const userInputInit = {
@@ -48,12 +49,7 @@ const handleLogin = async () => {
       <div class="row mb-3">
         <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
         <div class="col-sm-10">
-          <input
-            type="password"
-            class="form-control"
-            id="inputPassword3"
-            v-model="userInput.password"
-          />
+          <input type="password" class="form-control" id="inputPassword3" v-model="userInput.password" />
         </div>
       </div>
       <div class="row mb-3">
@@ -61,16 +57,8 @@ const handleLogin = async () => {
       </div>
       <div class="row mb-3">
         <div class="col-12 text-end">
-          <button
-            type="submit"
-            class="w-25 btn btn-primary d-none d-md-inline-block"
-            @click="handleLogin"
-          >
-            登入
-          </button>
-          <button type="submit" class="btn btn-primary w-100 d-md-none" @click="handleLogin">
-            登入
-          </button>
+          <button type="submit" class="w-25 btn btn-primary d-none d-md-inline-block" @click="handleLogin">登入</button>
+          <button type="submit" class="btn btn-primary w-100 d-md-none" @click="handleLogin">登入</button>
         </div>
       </div>
     </form>
