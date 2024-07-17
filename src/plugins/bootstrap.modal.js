@@ -5,7 +5,9 @@ export function useModal() {
     const modal = ref(null)
 
     onMounted(() => {
-        modal.value = new Modal(modalOption.value)
+        modal.value = new Modal(modalOption.value, {
+            focus: false
+        })
     })
 
     const myModalShow = () => {
