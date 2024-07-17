@@ -15,12 +15,21 @@ defineProps({
     type: Number
   }
 })
+const emits = defineEmits({
+  sendPageNum: (pageNum) => {
+    return typeof pageNum === 'number' ? true : false
+  }
+})
+const handlePageNum = (pageNum) => {
+  emits('sendPageNum', pageNum)
+}
 </script>
 <template>
   <Paginate
     :page-count="pageCount"
     :margin-pages="marginPages"
     :page-range="pageRange"
+    :click-handler="handlePageNum"
     :container-class="'pagination'"
     :page-class="'page-item'"
     :page-link-class="'page-link'"

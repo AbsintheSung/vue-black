@@ -13,6 +13,7 @@ const renderProductList = computed(() => productList.value)
 const unitProduct = ref({}) //用來傳遞單一商品內容給 modal用的
 const delTempProduct = ref({}) //用來傳遞刪除的單一商品 給 modal用
 const isEdit = ref(true)
+const paginateInfo = ref({})
 const initUnitProduct = {
   category: '',
   content: '',
@@ -30,7 +31,8 @@ const initUnitProduct = {
 const getProductList = async () => {
   try {
     const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
-    // console.log(response.data)
+    paginateInfo.value = response.data.pagination
+    console.log(paginateInfo.value)
     productList.value = [...response.data.products]
     // console.log(productList.value)
   } catch (error) {
@@ -96,6 +98,9 @@ const fetchDalData = async (dataId) => {
 const getIsEditStatus = async (isEdit) => {
   isEdit ? await fetchEditData() : await fetchCreateData()
 }
+const handlePages = async (pageNum) => {
+  console.log(pageNum)
+}
 onMounted(() => {
   getProductList()
 })
@@ -137,6 +142,6 @@ onMounted(() => {
       </tr>
     </tbody>
   </table>
-  <PaginatePage></PaginatePage>
+  <PaginatePage :pageCount="4" @sendPageNum="handlePages"></PaginatePage>
 </template>
 <style scoped></style>
