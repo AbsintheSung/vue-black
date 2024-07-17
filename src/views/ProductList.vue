@@ -3,6 +3,7 @@ import axios from '../utils/http'
 import { computed, onMounted, ref } from 'vue'
 import ProductModal from '@/components/ProductModal.vue'
 import DelProductModalVue from '@/components/DelProductModal.vue'
+import PaginatePage from '@/components/PaginatePage.vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const productModalControl = ref('')
@@ -136,5 +137,6 @@ onMounted(() => {
       </tr>
     </tbody>
   </table>
+  <PaginatePage></PaginatePage>
 </template>
 <style scoped></style>
