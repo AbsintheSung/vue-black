@@ -20,19 +20,13 @@ defineExpose({
 </script>
 <template>
   <Teleport to="body">
-    <div class="toast-container position-fixed top-0 start-50 p-3">
+    <div class="toast-container top-0 start-50 translate-middle-x p-3">
       <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" ref="toastDom">
         <div class="toast-header">
           <!-- <img src="..." class="rounded me-2" alt="..." /> -->
           <strong class="me-auto">提示訊息</strong>
           <!-- <small>11 mins ago</small> -->
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-            @click="handleClose"
-          ></button>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" @click="handleClose"></button>
         </div>
         <div class="toast-body">{{ sendmessage }}</div>
       </div>
