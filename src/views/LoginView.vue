@@ -22,6 +22,7 @@ const handleLogin = async () => {
       document.cookie = `tokenCode=${token};expired=${new Date(expired)}`
       loginToastMes.value = '🟢' + message
       loginShowToast.value.handleOpen()
+      hideLoading()
       router.push('/')
       // console.log(document.cookie.replace(/(?:(?:^|.*;\s*)tokenCode\s*=\s*([^;]*).*$)|^.*$/, '$1'))
       // console.log('跳轉')
@@ -32,9 +33,9 @@ const handleLogin = async () => {
       loginToastMes.value = '🔴' + message
       loginShowToast.value.handleOpen()
     }
+    hideLoading()
   } finally {
     userInput.value = { ...userInputInit }
-    hideLoading()
   }
 }
 </script>
