@@ -3,6 +3,7 @@ import axios from '../utils/http'
 import OrderUserModal from '@/components/OrderUserModal.vue'
 import DelOrderModal from '@/components/DelOrderModal.vue'
 import PutOrderModal from '@/components/PutOrderModal.vue'
+import ToastView from '@/components/ToastView.vue'
 import { hideLoading, showLoading } from '@/plugins/loading-overlay'
 import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
@@ -13,6 +14,8 @@ const orderData = ref([])
 const OrderUserModalControl = ref('')
 const delOrderModalControl = ref('')
 const putOrderModalControl = ref('')
+const orederToastControl = ref('')
+const responseMessage = ref('')
 const putOrderItem = ref({})
 const delOrderId = ref('')
 const orderUserInfo = ref({})
@@ -32,7 +35,8 @@ const getOrderList = async () => {
     orderData.value = response.data.orders
     // console.log(response.data.orders)
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    orederToastControl.value.handleOpen()
   }
 }
 const handleUserInfo = (orderItem) => {
@@ -53,10 +57,13 @@ const delOneOrder = async (orderId) => {
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/order/${orderId}`)
     if (response.status === 200) {
       await getOrderList()
+      responseMessage.value = '🟢' + response.data.message
+      orederToastControl.value.handleOpen()
       delOrderModalControl.value.handleClose()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    orederToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -67,10 +74,13 @@ const delAllOrder = async (orderId) => {
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/orders/${orderId}`)
     if (response.status === 200) {
       await getOrderList()
+      responseMessage.value = '🟢' + response.data.message
+      orederToastControl.value.handleOpen()
       delOrderModalControl.value.handleClose()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    orederToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -90,10 +100,13 @@ const sendPutOrder = async (orderdata) => {
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/order/${orderdata.id}`, sendData)
     if (response.status === 200) {
       await getOrderList()
+      responseMessage.value = '🟢' + response.data.message
+      orederToastControl.value.handleOpen()
       putOrderModalControl.value.handleClose()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    orederToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -108,6 +121,7 @@ onMounted(async () => {
   <OrderUserModal ref="OrderUserModalControl" :orderUserInfo="orderUserInfo" />
   <DelOrderModal ref="delOrderModalControl" :delOrderId="delOrderId" @delOrder="sendDelOrderId" />
   <PutOrderModal ref="putOrderModalControl" :putOrderData="putOrderItem" @putOrder="sendPutOrder" />
+  <ToastView ref="orederToastControl" :sendmessage="responseMessage" />
   <h2>訂單列表</h2>
   <div class="text-end">
     <button class="btn btn-danger" type="button" @click="handleDelOrder('all')">刪除全部訂單</button>
