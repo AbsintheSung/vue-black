@@ -28,9 +28,11 @@ const initUnitProduct = {
   title: '',
   unit: ''
 }
-const getProductList = async () => {
+const getProductList = async (page = '1') => {
   try {
-    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
+    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`, {
+      params: { page: page.toString() }
+    })
     paginateInfo.value = response.data.pagination
     console.log(paginateInfo.value)
     productList.value = [...response.data.products]
@@ -99,7 +101,8 @@ const getIsEditStatus = async (isEdit) => {
   isEdit ? await fetchEditData() : await fetchCreateData()
 }
 const handlePages = async (pageNum) => {
-  console.log(pageNum)
+  await getProductList(pageNum)
+  // console.log(pageNum)
 }
 onMounted(() => {
   getProductList()
@@ -142,6 +145,6 @@ onMounted(() => {
       </tr>
     </tbody>
   </table>
-  <PaginatePage :pageCount="4" @sendPageNum="handlePages"></PaginatePage>
+  <PaginatePage :pageCount="paginateInfo.total_pages" @sendPageNum="handlePages"></PaginatePage>
 </template>
 <style scoped></style>

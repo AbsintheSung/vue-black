@@ -18,7 +18,6 @@ const orderUserInfo = ref({})
 const orderListData = computed(() => {
   return orderData.value.map((item) => {
     const formatDate = formatTimestamp(item.create_at)
-    console.log(formatDate)
     return {
       ...item,
       create_at: formatDate
