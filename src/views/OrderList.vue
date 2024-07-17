@@ -3,6 +3,7 @@ import axios from '../utils/http'
 import OrderUserModal from '@/components/OrderUserModal.vue'
 import DelOrderModal from '@/components/DelOrderModal.vue'
 import PutOrderModal from '@/components/PutOrderModal.vue'
+import { hideLoading, showLoading } from '@/plugins/loading-overlay'
 import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
@@ -26,9 +27,13 @@ const orderListData = computed(() => {
 })
 
 const getOrderList = async () => {
-  const response = await axios(`${baseURL}/v2/api/${apiName}/admin/orders`)
-  orderData.value = response.data.orders
-  console.log(response.data.orders)
+  try {
+    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/orders`)
+    orderData.value = response.data.orders
+    // console.log(response.data.orders)
+  } catch (error) {
+    console.log(error)
+  }
 }
 const handleUserInfo = (orderItem) => {
   orderUserInfo.value = orderItem
@@ -43,6 +48,7 @@ const sendDelOrderId = async (orderId) => {
   orderId === 'all' ? delAllOrder(orderId) : delOneOrder(orderId)
 }
 const delOneOrder = async (orderId) => {
+  showLoading()
   try {
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/order/${orderId}`)
     if (response.status === 200) {
@@ -51,9 +57,12 @@ const delOneOrder = async (orderId) => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    hideLoading()
   }
 }
 const delAllOrder = async (orderId) => {
+  showLoading()
   try {
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/orders/${orderId}`)
     if (response.status === 200) {
@@ -62,6 +71,8 @@ const delAllOrder = async (orderId) => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    hideLoading()
   }
 }
 const handlePaid = (order) => {
@@ -75,6 +86,7 @@ const sendPutOrder = async (orderdata) => {
     data: { ...orderdata, create_at: createAt, is_paid: !isPaid }
   }
   try {
+    showLoading()
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/order/${orderdata.id}`, sendData)
     if (response.status === 200) {
       await getOrderList()
@@ -82,10 +94,14 @@ const sendPutOrder = async (orderdata) => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    hideLoading()
   }
 }
-onMounted(() => {
-  getOrderList()
+onMounted(async () => {
+  showLoading()
+  await getOrderList()
+  hideLoading()
 })
 </script>
 <template>

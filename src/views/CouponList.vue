@@ -4,6 +4,7 @@ import CouponModal from '@/components/CouponModal.vue'
 import DelCouponModal from '@/components/DelCouponModal.vue'
 import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
+import { hideLoading, showLoading } from '@/plugins/loading-overlay'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const { formatTimestamp, dateChangeUnix } = useDateFormat()
@@ -64,6 +65,7 @@ const sendEditReq = async (couponData) => {
     }
   }
   try {
+    showLoading()
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/coupon/${couponData.id}`, temp)
     if (response.status === 200) {
       await getCouponList()
@@ -71,6 +73,8 @@ const sendEditReq = async (couponData) => {
     }
   } catch (error) {
     console.log('編輯請求失敗', error)
+  } finally {
+    hideLoading()
   }
 }
 const sendCreateReq = async (couponData) => {
@@ -80,6 +84,7 @@ const sendCreateReq = async (couponData) => {
     }
   }
   try {
+    showLoading()
     const response = await axios.post(`${baseURL}/v2/api/${apiName}/admin/coupon`, temp)
     if (response.status === 200) {
       await getCouponList()
@@ -87,6 +92,8 @@ const sendCreateReq = async (couponData) => {
     }
   } catch (error) {
     console.log('新建請求失敗', error)
+  } finally {
+    hideLoading()
   }
 }
 const handleDel = (couponData) => {
@@ -95,6 +102,7 @@ const handleDel = (couponData) => {
 }
 const getDelData = async (dataId) => {
   try {
+    showLoading()
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/coupon/${dataId}`)
     if (response.status === 200) {
       await getCouponList()
@@ -102,10 +110,14 @@ const getDelData = async (dataId) => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    hideLoading()
   }
 }
-onMounted(() => {
-  getCouponList()
+onMounted(async () => {
+  showLoading()
+  await getCouponList()
+  hideLoading()
 })
 </script>
 <template>
