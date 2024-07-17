@@ -3,7 +3,7 @@ import axios from 'axios'
 import { ref } from 'vue'
 import ToastView from '@/components/ToastView.vue'
 import { useRouter } from 'vue-router'
-import { useLoading } from 'vue-loading-overlay'
+import { hideLoading, showLoading } from '@/plugins/loading-overlay'
 const router = useRouter()
 const baseURL = import.meta.env.VITE_APP_API_URL
 const userInputInit = {
@@ -15,6 +15,7 @@ const loginToastMes = ref('')
 const userInput = ref({ ...userInputInit })
 const handleLogin = async () => {
   try {
+    showLoading()
     const response = await axios.post(`${baseURL}/v2/admin/signin`, userInput.value)
     if (response.status === 200) {
       const { token, expired, message } = response.data
@@ -33,6 +34,7 @@ const handleLogin = async () => {
     }
   } finally {
     userInput.value = { ...userInputInit }
+    hideLoading()
   }
 }
 </script>
