@@ -1,6 +1,7 @@
 <script setup>
 import axios from '../utils/http'
 import { computed, onMounted, ref } from 'vue'
+import { hideLoading, showLoading } from '@/plugins/loading-overlay'
 import ProductModal from '@/components/ProductModal.vue'
 import DelProductModalVue from '@/components/DelProductModal.vue'
 import PaginatePage from '@/components/PaginatePage.vue'
@@ -67,6 +68,7 @@ const fetchEditData = async () => {
     data: { ...unitProduct.value }
   }
   try {
+    showLoading()
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/product/${unitProduct.value.id}`, productData)
     if (response.status === 200) {
       await getProductList()
@@ -74,6 +76,8 @@ const fetchEditData = async () => {
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    hideLoading()
   }
 }
 //接收 productModal 傳遞來的事件，來執行新建資料( 發送API )
@@ -81,31 +85,48 @@ const fetchCreateData = async () => {
   const productData = {
     data: { ...unitProduct.value }
   }
-  const response = await axios.post(`${baseURL}/v2/api/${apiName}/admin/product`, productData)
-  console.log(response)
-  if (response.status === 200) {
-    await getProductList()
-    productModalControl.value.handleClose()
+  try {
+    showLoading()
+    const response = await axios.post(`${baseURL}/v2/api/${apiName}/admin/product`, productData)
+    console.log(response)
+    if (response.status === 200) {
+      await getProductList()
+      productModalControl.value.handleClose()
+    }
+  } catch (error) {
+    console.log(error)
+  } finally {
+    hideLoading()
   }
 }
 //接收 delProductModal 傳遞來的事件，來執行刪除資料( 發送API )
 const fetchDalData = async (dataId) => {
-  const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/product/${dataId}`)
-  if (response.status === 200) {
-    await getProductList()
-    delProductModalControl.value.handleClose()
-    // console.log(response.status)
+  try {
+    showLoading()
+    const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/product/${dataId}`)
+    if (response.status === 200) {
+      await getProductList()
+      delProductModalControl.value.handleClose()
+    }
+  } catch (error) {
+    console.log(error)
+  } finally {
+    hideLoading()
   }
 }
 const getIsEditStatus = async (isEdit) => {
   isEdit ? await fetchEditData() : await fetchCreateData()
 }
 const handlePages = async (pageNum) => {
+  showLoading()
   await getProductList(pageNum)
+  hideLoading()
   // console.log(pageNum)
 }
-onMounted(() => {
-  getProductList()
+onMounted(async () => {
+  showLoading()
+  await getProductList()
+  hideLoading()
 })
 </script>
 <template>
