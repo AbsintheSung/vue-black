@@ -3,6 +3,7 @@ import axios from '../utils/http'
 import { computed, onMounted, ref } from 'vue'
 import ProductModal from '@/components/ProductModal.vue'
 import DelProductModalVue from '@/components/DelProductModal.vue'
+import PaginatePage from '@/components/PaginatePage.vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const productModalControl = ref('')
@@ -12,6 +13,7 @@ const renderProductList = computed(() => productList.value)
 const unitProduct = ref({}) //用來傳遞單一商品內容給 modal用的
 const delTempProduct = ref({}) //用來傳遞刪除的單一商品 給 modal用
 const isEdit = ref(true)
+const paginateInfo = ref({})
 const initUnitProduct = {
   category: '',
   content: '',
@@ -26,10 +28,13 @@ const initUnitProduct = {
   title: '',
   unit: ''
 }
-const getProductList = async () => {
+const getProductList = async (page = '1') => {
   try {
-    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`)
-    // console.log(response.data)
+    const response = await axios(`${baseURL}/v2/api/${apiName}/admin/products`, {
+      params: { page: page.toString() }
+    })
+    paginateInfo.value = response.data.pagination
+    console.log(paginateInfo.value)
     productList.value = [...response.data.products]
     // console.log(productList.value)
   } catch (error) {
@@ -95,6 +100,10 @@ const fetchDalData = async (dataId) => {
 const getIsEditStatus = async (isEdit) => {
   isEdit ? await fetchEditData() : await fetchCreateData()
 }
+const handlePages = async (pageNum) => {
+  await getProductList(pageNum)
+  // console.log(pageNum)
+}
 onMounted(() => {
   getProductList()
 })
@@ -136,5 +145,6 @@ onMounted(() => {
       </tr>
     </tbody>
   </table>
+  <PaginatePage :pageCount="paginateInfo.total_pages" @sendPageNum="handlePages"></PaginatePage>
 </template>
 <style scoped></style>

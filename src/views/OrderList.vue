@@ -7,7 +7,7 @@ import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
-const { formatTimestamp } = useDateFormat()
+const { formatTimestamp, dateChangeUnix } = useDateFormat()
 const orderData = ref([])
 const OrderUserModalControl = ref('')
 const delOrderModalControl = ref('')
@@ -70,8 +70,9 @@ const handlePaid = (order) => {
 }
 const sendPutOrder = async (orderdata) => {
   const isPaid = orderdata.is_paid
+  const createAt = dateChangeUnix(orderdata.create_at)
   const sendData = {
-    data: { ...orderdata, is_paid: !isPaid }
+    data: { ...orderdata, create_at: createAt, is_paid: !isPaid }
   }
   try {
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/order/${orderdata.id}`, sendData)
