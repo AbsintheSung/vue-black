@@ -5,14 +5,17 @@ import { hideLoading, showLoading } from '@/plugins/loading-overlay'
 import ProductModal from '@/components/ProductModal.vue'
 import DelProductModalVue from '@/components/DelProductModal.vue'
 import PaginatePage from '@/components/PaginatePage.vue'
+import ToastView from '@/components/ToastView.vue'
 const baseURL = import.meta.env.VITE_APP_API_URL
 const apiName = import.meta.env.VITE_APP_API_NAME
 const productModalControl = ref('')
 const delProductModalControl = ref('')
+const productToastControl = ref('')
 const productList = ref([])
 const renderProductList = computed(() => productList.value)
 const unitProduct = ref({}) //用來傳遞單一商品內容給 modal用的
 const delTempProduct = ref({}) //用來傳遞刪除的單一商品 給 modal用
+const responseMessage = ref('')
 const isEdit = ref(true)
 const paginateInfo = ref({})
 const initUnitProduct = {
@@ -39,7 +42,8 @@ const getProductList = async (page = '1') => {
     productList.value = [...response.data.products]
     // console.log(productList.value)
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    productToastControl.value.handleOpen()
   }
 }
 const handleEdit = (productItem) => {
@@ -72,10 +76,13 @@ const fetchEditData = async () => {
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/product/${unitProduct.value.id}`, productData)
     if (response.status === 200) {
       await getProductList()
+      responseMessage.value = '🟢' + response.data.message
       productModalControl.value.handleClose()
+      productToastControl.value.handleOpen()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    productToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -91,10 +98,13 @@ const fetchCreateData = async () => {
     console.log(response)
     if (response.status === 200) {
       await getProductList()
+      responseMessage.value = '🟢' + response.data.message
       productModalControl.value.handleClose()
+      productToastControl.value.handleOpen()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    productToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -106,10 +116,13 @@ const fetchDalData = async (dataId) => {
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/product/${dataId}`)
     if (response.status === 200) {
       await getProductList()
+      responseMessage.value = '🟢' + response.data.message
       delProductModalControl.value.handleClose()
+      productToastControl.value.handleOpen()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    productToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -132,6 +145,7 @@ onMounted(async () => {
 <template>
   <DelProductModalVue ref="delProductModalControl" :delData="delTempProduct" @delProduct="fetchDalData" />
   <ProductModal ref="productModalControl" v-model:productItem="unitProduct" :isEdit="isEdit" @sendIsEdit="getIsEditStatus" />
+  <ToastView ref="productToastControl" :sendmessage="responseMessage" />
   <div class="text-end">
     <button class="btn btn-primary" type="button" @click="handleCreate({})">新增產品</button>
   </div>

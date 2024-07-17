@@ -4,7 +4,9 @@ export function useToast() {
     const toastDom = ref(null)
     const toast = ref(null)
     onMounted(() => {
-        toast.value = new Toast(toastDom.value)
+        toast.value = new Toast(toastDom.value, {
+            delay: 1500
+        })
     })
     const handleHide = () => {
         toast.value.hide()
