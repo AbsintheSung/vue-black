@@ -2,6 +2,7 @@
 import axios from '../utils/http'
 import CouponModal from '@/components/CouponModal.vue'
 import DelCouponModal from '@/components/DelCouponModal.vue'
+import ToastView from '@/components/ToastView.vue'
 import { useDateFormat } from '../composables/dateFormat.js'
 import { computed, onMounted, ref } from 'vue'
 import { hideLoading, showLoading } from '@/plugins/loading-overlay'
@@ -10,6 +11,8 @@ const apiName = import.meta.env.VITE_APP_API_NAME
 const { formatTimestamp, dateChangeUnix } = useDateFormat()
 const couponModalControl = ref('')
 const delCouponModalControl = ref('')
+const couponToastControl = ref('')
+const responseMessage = ref('')
 const couponList = ref([])
 const delOneCoupon = ref({})
 const isEdit = ref(false)
@@ -45,7 +48,8 @@ const getCouponList = async () => {
     const response = await axios(`${baseURL}/v2/api/${apiName}/admin/coupons`)
     couponList.value = [...response.data.coupons]
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    couponToastControl.value.handleOpen()
   }
 }
 const fetchDataReq = (isEdit) => {
@@ -69,10 +73,13 @@ const sendEditReq = async (couponData) => {
     const response = await axios.put(`${baseURL}/v2/api/${apiName}/admin/coupon/${couponData.id}`, temp)
     if (response.status === 200) {
       await getCouponList()
+      responseMessage.value = '🟢' + response.data.message
+      couponToastControl.value.handleOpen()
       couponModalControl.value.handleClose()
     }
   } catch (error) {
-    console.log('編輯請求失敗', error)
+    responseMessage.value = '🔴' + error.response.data.message
+    couponToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -88,10 +95,13 @@ const sendCreateReq = async (couponData) => {
     const response = await axios.post(`${baseURL}/v2/api/${apiName}/admin/coupon`, temp)
     if (response.status === 200) {
       await getCouponList()
+      responseMessage.value = '🟢' + response.data.message
+      couponToastControl.value.handleOpen()
       couponModalControl.value.handleClose()
     }
   } catch (error) {
-    console.log('新建請求失敗', error)
+    responseMessage.value = '🔴' + error.response.data.message
+    couponToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -106,10 +116,13 @@ const getDelData = async (dataId) => {
     const response = await axios.delete(`${baseURL}/v2/api/${apiName}/admin/coupon/${dataId}`)
     if (response.status === 200) {
       await getCouponList()
+      responseMessage.value = '🟢' + response.data.message
+      couponToastControl.value.handleOpen()
       delCouponModalControl.value.handleClose()
     }
   } catch (error) {
-    console.log(error)
+    responseMessage.value = '🔴' + error.response.data.message
+    couponToastControl.value.handleOpen()
   } finally {
     hideLoading()
   }
@@ -123,6 +136,7 @@ onMounted(async () => {
 <template>
   <DelCouponModal ref="delCouponModalControl" :delData="delOneCoupon" @delCoupon="getDelData" />
   <CouponModal ref="couponModalControl" v-model:couPonItem="couPonData" :isEdit="isEdit" @sendReq="fetchDataReq" />
+  <ToastView ref="couponToastControl" :sendmessage="responseMessage" />
   <div>我是優惠卷列表</div>
   <div class="text-end">
     <button class="btn btn-primary" type="button" @click="handleCreate">新增優惠券</button>
