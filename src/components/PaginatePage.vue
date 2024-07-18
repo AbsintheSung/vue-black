@@ -42,4 +42,8 @@ const handlePageNum = (pageNum) => {
     :first-last-button="true"
   ></Paginate>
 </template>
-<style scoped></style>
+<style>
+.page-link:hover {
+  cursor: pointer;
+}
+</style>
