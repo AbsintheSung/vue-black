@@ -38,7 +38,7 @@ const getProductList = async (page = '1') => {
       params: { page: page.toString() }
     })
     paginateInfo.value = response.data.pagination
-    console.log(paginateInfo.value)
+    // console.log(paginateInfo.value)
     productList.value = [...response.data.products]
     // console.log(productList.value)
   } catch (error) {
