@@ -38,7 +38,7 @@ const getProductList = async (page = '1') => {
       params: { page: page.toString() }
     })
     paginateInfo.value = response.data.pagination
-    console.log(paginateInfo.value)
+    // console.log(paginateInfo.value)
     productList.value = [...response.data.products]
     // console.log(productList.value)
   } catch (error) {
@@ -49,6 +49,9 @@ const getProductList = async (page = '1') => {
 const handleEdit = (productItem) => {
   unitProduct.value = { ...productItem }
   isEdit.value = true
+  if (!unitProduct.value.imagesUrl) {
+    unitProduct.value.imagesUrl = []
+  }
   while (unitProduct.value.imagesUrl.length < 5) {
     unitProduct.value.imagesUrl.push(undefined)
   }
