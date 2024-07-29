@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import './plugins/bootstrap.config';
 import 'vue-loading-overlay/dist/css/index.css';
+import "@/plugins/vee-vailbate.config"
 
 const app = createApp(App)
 

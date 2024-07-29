@@ -25,7 +25,7 @@ const initUnitProduct = {
   id: '',
   imageUrl: '',
   imagesUrl: Array(5), //必須指派該陣列確實位子有幾個，否則渲染會有問題
-  is_enabled: 0,
+  is_enabled: '1',
   origin_price: '',
   price: '',
   num: '',
@@ -130,8 +130,9 @@ const fetchDalData = async (dataId) => {
     hideLoading()
   }
 }
-const getIsEditStatus = async (isEdit) => {
+const getIsEditStatus = async (isEdit, resetForm) => {
   isEdit ? await fetchEditData() : await fetchCreateData()
+  resetForm()
 }
 const handlePages = async (pageNum) => {
   showLoading()
