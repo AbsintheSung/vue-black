@@ -57,7 +57,7 @@ const getCouponList = async (page = '1') => {
     couponToastControl.value.handleOpen()
   }
 }
-const fetchDataReq = (isEdit) => {
+const fetchDataReq = (isEdit, resetForm) => {
   const sendData = { ...couPonData.value, due_date: dateChangeUnix(couPonData.value.due_date) }
   if (isEdit) {
     // console.log('發送編輯請求', sendData)
@@ -66,6 +66,7 @@ const fetchDataReq = (isEdit) => {
     // console.log('發送新增請求', sendData)
     sendCreateReq(sendData)
   }
+  resetForm()
 }
 const sendEditReq = async (couponData) => {
   const temp = {

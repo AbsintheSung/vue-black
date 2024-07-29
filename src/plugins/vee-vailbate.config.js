@@ -21,10 +21,6 @@ Object.entries(all).forEach(([name, rule]) => {
 })
 
 export const userSchema = {
-    // useremail: 'required|email',
-    // username: 'required',
-    // userphone: 'required|numeric',
-    // useraddress: 'required',
     category: 'required',//種類
     content: 'required',//內容
     description: 'required',//描述
@@ -34,3 +30,10 @@ export const userSchema = {
     title: 'required',//產品標題
     unit: 'required'//產品單位
 }
+
+export const couponSchema = {
+    'couponTitle': 'required',
+    'couponCode': 'required',
+    'discount': 'required',
+}
+
