@@ -49,6 +49,9 @@ const getProductList = async (page = '1') => {
 const handleEdit = (productItem) => {
   unitProduct.value = { ...productItem }
   isEdit.value = true
+  if (!unitProduct.value.imagesUrl) {
+    unitProduct.value.imagesUrl = []
+  }
   while (unitProduct.value.imagesUrl.length < 5) {
     unitProduct.value.imagesUrl.push(undefined)
   }
